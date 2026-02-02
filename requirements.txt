@@ -1,0 +1,4 @@
+Flask
+pytest>=8.0
+pytest-cov>=4.0
+mysql-connector-python==8.3.0
