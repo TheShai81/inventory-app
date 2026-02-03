@@ -4,10 +4,10 @@ pipeline {
     environment {
         VENV_DIR = "${WORKSPACE}\\venv"
         APP_NAME = "inventory-app"
+        BRANCH = "${env.GIT_BRANCH ?: 'unknown'}"
     }
 
     stages {
-
         stage('Setup Environment') {
             agent { label 'python' }
             steps {
@@ -25,6 +25,7 @@ pipeline {
                 bat '''
                     source ${VENV_DIR}/Scripts/activate
                     echo "Code quality placeholder"
+                    echo "Branch: ${BRANCH}"
                 '''
             }
         }
@@ -39,11 +40,16 @@ pipeline {
         }
 
         stage('Build Artifacts') {
+            when {
+                expression {
+                    return BRANCH.endsWith('/main')
+                }
+            }
             agent { label 'build' }
             steps {
                 bat """
-                %VENV%\\Scripts\\python.exe setup.py sdist bdist_wheel
-                dir dist
+                mkdir -p dist
+                tar -czf dist/${APP_NAME}-${BUILD_NUMBER}.tar.gz app/ requirements.txt db/
                 """
             }
             post {
@@ -56,10 +62,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline completed successfully"
+            echo "Pipeline completed successfully on ${BRANCH}"
         }
         failure {
-            echo "Pipeline failed"
+            echo "Pipeline failed on ${BRANCH}"
         }
     }
 }
