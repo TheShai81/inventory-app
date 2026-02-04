@@ -1,21 +1,21 @@
 pipeline {
     agent none
-    def FAILED_STAGE = ''
 
     environment {
         VENV_DIR = "${WORKSPACE}\\venv"
         APP_NAME = "inventory-app"
         BRANCH = "${env.GIT_BRANCH ?: 'unknown'}"
         SONAR_SCANNER_HOME = tool 'SonarScanner'
+        FAILED_STAGE = ''
     }
 
     stages {
-        script {
-            FAILED_STAGE = env.STAGE_NAME
-        }
         stage('Setup Environment') {
             agent { label 'python' }
             steps {
+                script {
+                    env.FAILED_STAGE = env.STAGE_NAME
+                }
                 bat """
                 "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python.exe" -m venv "%VENV_DIR%"
                 "%VENV_DIR%\\Scripts\\pip.exe" install --upgrade pip
@@ -26,10 +26,10 @@ pipeline {
 
         stage('Code Quality') {
             agent { label 'quality' }
-            script {
-                FAILED_STAGE = env.STAGE_NAME
-            }
             steps {
+                script {
+                    env.FAILED_STAGE = env.STAGE_NAME
+                }
                 withSonarQubeEnv('SonarQube') {
                     bat """
                     "%SONAR_SCANNER_HOME%\\bin\\sonar-scanner.bat"
@@ -39,20 +39,17 @@ pipeline {
         }
 
         stage('Quality Gate') {
-            script {
-                FAILED_STAGE = env.STAGE_NAME
-            }
             steps {
                 timeout(time: 1, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
+                }
+                script {
+                    env.FAILED_STAGE = env.STAGE_NAME
                 }
             }
         }
 
         stage('Setup Staging Database') {
-            script {
-                FAILED_STAGE = env.STAGE_NAME
-            }
             steps {
                 withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASSWORD')]) {
                     bat """
@@ -60,14 +57,17 @@ pipeline {
                     mysql -u inventory_user -p%DB_PASSWORD% < db\\seed.sql
                     """
                 }
+                script {
+                    env.FAILED_STAGE = env.STAGE_NAME
+                }
             }
         }
 
         stage('End-to-End Playwright Tests') {
-            script {
-                FAILED_STAGE = env.STAGE_NAME
-            }
             steps {
+                script {
+                    env.FAILED_STAGE = env.STAGE_NAME
+                }
                 bat """
                 set PYTHONPATH=%WORKSPACE%
                 "%VENV_DIR%\\Scripts\\pytest.exe" tests\\e2e --html=reports\\e2e-report.html --self-contained-html
@@ -81,10 +81,10 @@ pipeline {
         }
 
         stage('Performance Test with k6') {
-            script {
-                FAILED_STAGE = env.STAGE_NAME
-            }
             steps {
+                script {
+                    env.FAILED_STAGE = env.STAGE_NAME
+                }
                 bat """
                 k6 run --out json=reports\\k6-results.json tests\\performance\\load_test.js
                 """
@@ -104,10 +104,10 @@ pipeline {
                 }
             }
             agent { label 'build' }
-            script {
-                FAILED_STAGE = env.STAGE_NAME
-            }
             steps {
+                script {
+                    env.FAILED_STAGE = env.STAGE_NAME
+                }
                 bat """
                 if not exist dist mkdir dist
                 tar -czf dist\\%APP_NAME%-%BUILD_NUMBER%.tar.gz app requirements.txt db
@@ -138,7 +138,7 @@ pipeline {
                         "Job: ${env.JOB_NAME}\n" +
                         "Build: #${env.BUILD_NUMBER}\n" +
                         "Branch: ${BRANCH}\n" +
-                        "Failed Stage: ${FAILED_STAGE}"
+                        "Failed Stage: ${env.FAILED_STAGE}"
             )
         }
     }
