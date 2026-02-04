@@ -28,7 +28,7 @@ pipeline {
                 script {
                     env.FAILED_STAGE = 'Code Quality'
                     def scannerHome = tool 'SonarScanner'
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('sonarqube-server') {
                         bat """
                         "${scannerHome}\\bin\\sonar-scanner"
                         """
@@ -104,7 +104,7 @@ pipeline {
             agent any
             when {
                 expression {
-                    return ${env.BRANCH_NAME}.endsWith('/main')
+                    return env.BRANCH_NAME.endsWith('/main')
                 }
             }
             steps {
