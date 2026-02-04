@@ -5,6 +5,28 @@ import pytest
 
 BASE_URL = "http://localhost:5000"
 
+@pytest.fixture(scope="session", autouse=True)
+def flask_server():
+    proc = subprocess.Popen(
+        ["python", "app.py"], 
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+
+    for _ in range(10):
+        try:
+            requests.get("http://127.0.0.1:5000")
+            break
+        except requests.exceptions.ConnectionError:
+            time.sleep(1)
+    else:
+        proc.terminate()
+        raise RuntimeError("Flask server failed to start")
+
+    yield
+
+    proc.terminate()
+    proc.wait()
+
 def test_user_journey():
     r = requests.post(
         f"{BASE_URL}/add",
