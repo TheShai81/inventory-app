@@ -9,7 +9,6 @@ pipeline {
 
     stages {
         stage('Setup Environment') {
-            agent { label 'python' }
             steps {
                 script {
                     env.FAILED_STAGE = 'Setup Environment'
@@ -23,7 +22,6 @@ pipeline {
         }
 
         stage('Code Quality') {
-            agent { label 'quality' }
             steps {
                 script {
                     env.FAILED_STAGE = 'Code Quality'
@@ -102,7 +100,6 @@ pipeline {
                     return ${env.BRANCH_NAME}.endsWith('/main')
                 }
             }
-            agent { label 'build' }
             steps {
                 script {
                     env.FAILED_STAGE = 'Build Artifacts'
