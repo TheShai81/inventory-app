@@ -109,7 +109,8 @@ pipeline {
             agent any
             when {
                 expression {
-                    return env.BRANCH_NAME.endsWith('/main')
+                    def branch = env.BRANCH_NAME ?: env.GIT_BRANCH
+                    return branch.endsWith('/main')
                 }
             }
             steps {
