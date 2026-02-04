@@ -77,6 +77,8 @@ pipeline {
                 }
                 bat """
                 set PYTHONPATH=%WORKSPACE%
+                start /B "%VENV_DIR%\\Scripts\\python.exe" app.py
+                timeout /t 5
                 "%VENV_DIR%\\Scripts\\pytest.exe" tests\\e2e --html=reports\\e2e-report.html --self-contained-html
                 """
             }
