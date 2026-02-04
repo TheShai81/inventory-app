@@ -27,12 +27,12 @@ pipeline {
             steps {
                 script {
                     env.FAILED_STAGE = 'Code Quality'
-                }
-                def scannerHome = tool 'SonarScanner'
-                withSonarQubeEnv('SonarQube') {
-                    bat """
-                    "${scannerHome}\\bin\\sonar-scanner.bat"
-                    """
+                    def scannerHome = tool 'SonarScanner'
+                    withSonarQubeEnv('SonarQube') {
+                        bat """
+                        "${scannerHome}\\bin\\sonar-scanner"
+                        """
+                    }
                 }
             }
         }
