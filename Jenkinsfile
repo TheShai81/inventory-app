@@ -20,6 +20,8 @@ pipeline {
                 "%VENV_DIR%\\Scripts\\pip.exe" install -r requirements.txt
                 "%VENV_DIR%\\Scripts\\playwright.exe" install
                 """
+                bat "echo %VENV_DIR%"
+                bat "%VENV_DIR%\\Scripts\\python.exe --version"
             }
         }
 
