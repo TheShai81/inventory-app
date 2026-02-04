@@ -9,6 +9,7 @@ pipeline {
 
     stages {
         stage('Setup Environment') {
+            agent any
             steps {
                 script {
                     env.FAILED_STAGE = 'Setup Environment'
@@ -22,6 +23,7 @@ pipeline {
         }
 
         stage('Code Quality') {
+            agent any
             steps {
                 script {
                     env.FAILED_STAGE = 'Code Quality'
@@ -36,6 +38,7 @@ pipeline {
         }
 
         stage('Quality Gate') {
+            agent any
             steps {
                 timeout(time: 1, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
@@ -47,6 +50,7 @@ pipeline {
         }
 
         stage('Setup Staging Database') {
+            agent any
             steps {
                 withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASSWORD')]) {
                     bat """
@@ -61,6 +65,7 @@ pipeline {
         }
 
         stage('End-to-End Playwright Tests') {
+            agent any
             steps {
                 script {
                     env.FAILED_STAGE = 'End-to-End Playwright Tests'
@@ -78,6 +83,7 @@ pipeline {
         }
 
         stage('Performance Test with k6') {
+            agent any
             steps {
                 script {
                     env.FAILED_STAGE = 'Performance Test with k6'
@@ -95,6 +101,7 @@ pipeline {
 
 
         stage('Build Artifacts') {
+            agent any
             when {
                 expression {
                     return ${env.BRANCH_NAME}.endsWith('/main')
