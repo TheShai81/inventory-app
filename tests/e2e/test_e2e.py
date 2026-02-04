@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture(scope="session", autouse=True)
 def start_flask():
-    proc = subprocess.Popen(["python", "app.py"])
+    proc = subprocess.Popen(["python", "app/app.py"])
     time.sleep(5)  # wait for server
     yield
     proc.terminate()
