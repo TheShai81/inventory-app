@@ -122,27 +122,19 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline completed successfully on branch ${env.BRANCH_NAME ?: 'unknown'}"
             slackSend(
                 channel: '#all-personal-workspace',
                 color: 'good',
                 tokenCredentialId: 'slack-webhook',
-                message: """Jenkins Pipeline Succeeded
-    Build: #${env.BUILD_NUMBER}
-    Branch: ${env.BRANCH_NAME ?: 'unknown'}"""
+                message: "✅ Pipeline Succeeded\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}"
             )
         }
-
         failure {
-            echo "Pipeline failed on branch ${env.BRANCH_NAME ?: 'unknown'}"
             slackSend(
                 channel: '#all-personal-workspace',
                 color: 'danger',
                 tokenCredentialId: 'slack-webhook',
-                message: """Jenkins Pipeline Failed
-    Build: #${env.BUILD_NUMBER}
-    Branch: ${env.BRANCH_NAME ?: 'unknown'}
-    Failed Stage: ${env.FAILED_STAGE}"""
+                message: "❌ Pipeline Failed\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}\nFailed Stage: ${env.FAILED_STAGE}"
             )
         }
     }
