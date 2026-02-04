@@ -1,4 +1,4 @@
-USE inventory_staging_db;
+USE inventory__db;
 
 INSERT INTO inventory (item_name, amount) VALUES
 ('apple', 100),
