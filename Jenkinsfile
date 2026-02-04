@@ -123,21 +123,21 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline completed successfully on ${BRANCH}"
+            echo "Pipeline completed successfully on ${env.BRANCH}"
             slackSend(
                 message: "Jenkins pipeline succeeded.\n" +
                         "Job: ${env.JOB_NAME}\n" +
                         "Build: #${env.BUILD_NUMBER}\n" +
-                        "Branch: ${BRANCH}"
+                        "Branch: ${env.BRANCH}"
             )
         }
         failure {
-            echo "Pipeline failed on ${BRANCH}"
+            echo "Pipeline failed on ${env.BRANCH}"
             slackSend(
                 message: "Jenkins pipeline failed.\n" +
                         "Job: ${env.JOB_NAME}\n" +
                         "Build: #${env.BUILD_NUMBER}\n" +
-                        "Branch: ${BRANCH}\n" +
+                        "Branch: ${env.BRANCH}\n" +
                         "Failed Stage: ${env.FAILED_STAGE}"
             )
         }
