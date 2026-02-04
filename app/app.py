@@ -116,7 +116,7 @@ def remove_item():
 @app.route("/inventory", methods=["GET"])
 def list_inventory():
     """
-    Returns the full inventory as a JSON list..
+    Returns the full inventory as a JSON list.
     """
     try:
         conn = mysql.connector.connect(**DB_CONFIG)
