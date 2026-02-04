@@ -4,7 +4,6 @@ pipeline {
     environment {
         VENV_DIR = "${WORKSPACE}\\venv"
         APP_NAME = "inventory-app"
-        SONAR_SCANNER_HOME = tool 'SonarScanner'
         FAILED_STAGE = 'unknown'
     }
 
@@ -29,9 +28,10 @@ pipeline {
                 script {
                     env.FAILED_STAGE = 'Code Quality'
                 }
+                def scannerHome = tool 'SonarScanner'
                 withSonarQubeEnv('SonarQube') {
                     bat """
-                    "%SONAR_SCANNER_HOME%\\bin\\sonar-scanner.bat"
+                    "${scannerHome}\\bin\\sonar-scanner.bat"
                     """
                 }
             }
