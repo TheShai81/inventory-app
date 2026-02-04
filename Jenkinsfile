@@ -54,10 +54,11 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASSWORD')]) {
                     bat """
-                    mysql -u inventory_user -p%DB_PASSWORD% < db\\schema.sql
-                    mysql -u inventory_user -p%DB_PASSWORD% < db\\seed.sql
+                    "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe" -u inventory_user -p%DB_PASSWORD% < db\\schema.sql
+                    "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe" -u inventory_user -p%DB_PASSWORD% < db\\seed.sql
                     """
                 }
+
                 script {
                     env.FAILED_STAGE = 'Setup Staging Database'
                 }
