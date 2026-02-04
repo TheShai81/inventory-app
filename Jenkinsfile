@@ -4,9 +4,8 @@ pipeline {
     environment {
         VENV_DIR = "${WORKSPACE}\\venv"
         APP_NAME = "inventory-app"
-        BRANCH = "${env.GIT_BRANCH ?: 'unknown'}"
         SONAR_SCANNER_HOME = tool 'SonarScanner'
-        FAILED_STAGE = ''
+        FAILED_STAGE = 'unknown'
     }
 
     stages {
@@ -14,7 +13,7 @@ pipeline {
             agent { label 'python' }
             steps {
                 script {
-                    env.FAILED_STAGE = env.STAGE_NAME
+                    env.FAILED_STAGE = 'Setup Environment'
                 }
                 bat """
                 "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python.exe" -m venv "%VENV_DIR%"
@@ -28,7 +27,7 @@ pipeline {
             agent { label 'quality' }
             steps {
                 script {
-                    env.FAILED_STAGE = env.STAGE_NAME
+                    env.FAILED_STAGE = 'Code Quality'
                 }
                 withSonarQubeEnv('SonarQube') {
                     bat """
@@ -44,7 +43,7 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
                 script {
-                    env.FAILED_STAGE = env.STAGE_NAME
+                    env.FAILED_STAGE = 'Quality Gate'
                 }
             }
         }
@@ -58,7 +57,7 @@ pipeline {
                     """
                 }
                 script {
-                    env.FAILED_STAGE = env.STAGE_NAME
+                    env.FAILED_STAGE = 'Setup Staging Database'
                 }
             }
         }
@@ -66,7 +65,7 @@ pipeline {
         stage('End-to-End Playwright Tests') {
             steps {
                 script {
-                    env.FAILED_STAGE = env.STAGE_NAME
+                    env.FAILED_STAGE = 'End-to-End Playwright Tests'
                 }
                 bat """
                 set PYTHONPATH=%WORKSPACE%
@@ -83,7 +82,7 @@ pipeline {
         stage('Performance Test with k6') {
             steps {
                 script {
-                    env.FAILED_STAGE = env.STAGE_NAME
+                    env.FAILED_STAGE = 'Performance Test with k6'
                 }
                 bat """
                 k6 run --out json=reports\\k6-results.json tests\\performance\\load_test.js
@@ -100,13 +99,13 @@ pipeline {
         stage('Build Artifacts') {
             when {
                 expression {
-                    return BRANCH.endsWith('/main')
+                    return ${env.BRANCH_NAME}.endsWith('/main')
                 }
             }
             agent { label 'build' }
             steps {
                 script {
-                    env.FAILED_STAGE = env.STAGE_NAME
+                    env.FAILED_STAGE = 'Build Artifacts'
                 }
                 bat """
                 if not exist dist mkdir dist
@@ -123,21 +122,21 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline completed successfully on ${env.BRANCH}"
+            echo "Pipeline completed successfully on ${env.BRANCH_NAME}"
             slackSend(
                 message: "Jenkins pipeline succeeded.\n" +
                         "Job: ${env.JOB_NAME}\n" +
                         "Build: #${env.BUILD_NUMBER}\n" +
-                        "Branch: ${env.BRANCH}"
+                        "Branch: ${env.BRANCH_NAME}"
             )
         }
         failure {
-            echo "Pipeline failed on ${env.BRANCH}"
+            echo "Pipeline failed on ${env.BRANCH_NAME}"
             slackSend(
                 message: "Jenkins pipeline failed.\n" +
                         "Job: ${env.JOB_NAME}\n" +
                         "Build: #${env.BUILD_NUMBER}\n" +
-                        "Branch: ${env.BRANCH}\n" +
+                        "Branch: ${env.BRANCH_NAME}\n" +
                         "Failed Stage: ${env.FAILED_STAGE}"
             )
         }
