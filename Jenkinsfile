@@ -9,7 +9,7 @@ pipeline {
 
     stages {
         stage('Setup Environment') {
-            agent any
+            agent { label 'windows' }
             steps {
                 script {
                     env.FAILED_STAGE = 'Setup Environment'
@@ -27,7 +27,7 @@ pipeline {
         }
 
         stage('Code Quality') {
-            agent any
+            agent { label 'testing' }
             steps {
                 script {
                     env.FAILED_STAGE = 'Code Quality'
@@ -42,7 +42,7 @@ pipeline {
         }
 
         stage('Quality Gate') {
-            agent any
+            agent { label 'testing' }
             steps {
                 timeout(time: 3, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
@@ -54,7 +54,7 @@ pipeline {
         }
 
         stage('Setup Staging Database') {
-            agent any
+            agent { label 'windows' }
             steps {
                 withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASSWORD')]) {
                     bat """
@@ -72,7 +72,7 @@ pipeline {
         }
 
         stage('End-to-End Playwright Tests') {
-            agent any
+            agent { label 'testing' }
             steps {
                 script {
                     env.FAILED_STAGE = 'End-to-End Playwright Tests'
@@ -90,7 +90,7 @@ pipeline {
         }
 
         stage('Performance Test with k6') {
-            agent any
+            agent { label 'testing' }
             steps {
                 script {
                     env.FAILED_STAGE = 'Performance Test with k6'
@@ -108,7 +108,7 @@ pipeline {
 
 
         stage('Build Artifacts') {
-            agent any
+            agent { label 'windows' }
             when {
                 expression {
                     def branch = env.BRANCH_NAME ?: env.GIT_BRANCH
