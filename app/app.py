@@ -113,5 +113,29 @@ def remove_item():
             conn.close()
 
 
+@app.route("/inventory", methods=["GET"])
+def list_inventory():
+    """
+    Returns the full inventory as a JSON list.
+    """
+    try:
+        conn = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT id, item_name, amount FROM inventory ORDER BY item_name"
+        )
+        rows = cursor.fetchall()
+
+        return jsonify(rows), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
