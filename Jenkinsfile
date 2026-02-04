@@ -16,6 +16,8 @@ pipeline {
                     echo "VENV_DIR = ${env.VENV_DIR}"
                 }
                 bat """
+                echo "This is a test failure"
+                randomcommand!!!!!
                 "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python.exe" -m venv "%VENV_DIR%"
                 "%VENV_DIR%\\Scripts\\pip.exe" install --upgrade pip
                 "%VENV_DIR%\\Scripts\\pip.exe" install -r requirements.txt
@@ -138,7 +140,7 @@ pipeline {
                 channel: '#all-personal-workspace',
                 color: 'good',
                 tokenCredentialId: 'slack-webhook',
-                message: "✅ Pipeline Succeeded\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}"
+                message: "Pipeline Succeeded\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}"
             )
         }
         failure {
@@ -146,7 +148,7 @@ pipeline {
                 channel: '#all-personal-workspace',
                 color: 'danger',
                 tokenCredentialId: 'slack-webhook',
-                message: "❌ Pipeline Failed\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}\nFailed Stage: ${env.FAILED_STAGE}"
+                message: "Pipeline Failed\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}\nFailed Stage: ${env.FAILED_STAGE}"
             )
         }
     }
