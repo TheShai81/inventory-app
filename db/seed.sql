@@ -1,4 +1,4 @@
-USE inventory__db;
+USE inventory_db;
 
 INSERT INTO inventory (item_name, amount) VALUES
 ('apple', 100),
