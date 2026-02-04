@@ -1,4 +1,13 @@
+import subprocess
+import time
 import requests
+
+@pytest.fixture(scope="session", autouse=True)
+def start_flask():
+    proc = subprocess.Popen(["python", "app.py"])
+    time.sleep(5)  # wait for server
+    yield
+    proc.terminate()
 
 BASE_URL = "http://localhost:5000"
 
