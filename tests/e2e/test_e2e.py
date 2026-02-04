@@ -8,11 +8,11 @@ BASE_URL = "http://localhost:5000"
 @pytest.fixture(scope="session", autouse=True)
 def flask_server():
     proc = subprocess.Popen(
-        ["python", "app/app.py"], 
+        ["python", "app/run_flask_for_tasks.py"], 
         stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
 
-    for _ in range(10):
+    for _ in range(5):
         try:
             requests.get("http://127.0.0.1:5000")
             break
