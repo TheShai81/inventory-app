@@ -17,7 +17,7 @@ pipeline {
                 }
                 bat """
                 echo "This is a test failure"
-                randomcommand!!!!!
+                exit /B 1
                 "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.13_3.13.2544.0_x64__qbz5n2kfra8p0\\python.exe" -m venv "%VENV_DIR%"
                 "%VENV_DIR%\\Scripts\\pip.exe" install --upgrade pip
                 "%VENV_DIR%\\Scripts\\pip.exe" install -r requirements.txt
