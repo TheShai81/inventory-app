@@ -139,7 +139,7 @@ pipeline {
             slackSend(
                 channel: '#all-personal-workspace',
                 color: 'good',
-                tokenCredentialId: 'slack-webhook',
+                tokenCredentialId: 'slack-token',
                 message: "Pipeline Succeeded\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}"
             )
         }
@@ -147,7 +147,7 @@ pipeline {
             slackSend(
                 channel: '#all-personal-workspace',
                 color: 'danger',
-                tokenCredentialId: 'slack-webhook',
+                tokenCredentialId: 'slack-token',
                 message: "Pipeline Failed\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nBranch: ${env.BRANCH_NAME ?: 'unknown'}\nFailed Stage: ${env.FAILED_STAGE}"
             )
         }
