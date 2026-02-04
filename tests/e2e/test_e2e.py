@@ -8,7 +8,7 @@ BASE_URL = "http://localhost:5000"
 @pytest.fixture(scope="session", autouse=True)
 def flask_server():
     proc = subprocess.Popen(
-        ["python", "app.py"], 
+        ["python", "app/app.py"], 
         stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
 
