@@ -58,6 +58,8 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASSWORD')]) {
                     bat """
+                    "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe" -u inventory_user -p%DB_PASSWORD% -e "DROP DATABASE IF EXISTS inventory_db;"
+                    "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe" -u inventory_user -p%DB_PASSWORD% -e "CREATE DATABASE inventory_db;"
                     "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe" -u inventory_user -p%DB_PASSWORD% < db\\schema.sql
                     "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe" -u inventory_user -p%DB_PASSWORD% < db\\seed.sql
                     """
