@@ -1,6 +1,7 @@
 import subprocess
 import time
 import requests
+import pytest
 
 @pytest.fixture(scope="session", autouse=True)
 def start_flask():
