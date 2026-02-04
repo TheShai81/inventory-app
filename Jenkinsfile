@@ -2,7 +2,7 @@ pipeline {
     agent none
 
     environment {
-        VENV_DIR = "${WORKSPACE}\\venv"
+        VENV_DIR = "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\inventory-app-cicd\\venv"
         APP_NAME = "inventory-app"
         FAILED_STAGE = 'unknown'
     }
@@ -13,7 +13,6 @@ pipeline {
             steps {
                 script {
                     env.FAILED_STAGE = 'Setup Environment'
-                    env.VENV_DIR = "${WORKSPACE}\\venv"
                     echo "VENV_DIR = ${env.VENV_DIR}"
                 }
                 bat """
